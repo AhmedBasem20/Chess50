@@ -1,6 +1,6 @@
 #screen dimensions
-WIDTH = 600
-HEIGHT = 600
+WIDTH = 800
+HEIGHT = 800
 #chess board dimensions
 ROWS = 8
 COLS = 8
