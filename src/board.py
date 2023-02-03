@@ -1,6 +1,6 @@
 import os
 from const import *
-
+from move import *
 class Square:
 
     def __init__(self, row, col, piece=None):
@@ -11,6 +11,25 @@ class Square:
     def has_piece(self):
         return self.piece != None
 
+    def isempty(self):
+        return not self.has_piece()
+    
+    def has_rival_piece(self, color):
+        return self.has_piece() and self.piece.color != color
+    
+    def has_team_piece(self, color):
+        return self.has_piece() and self.piece.color == color
+
+    def isempty_or_rival(self, color):
+        return self.has_piece() == False or self.has_rival_piece(color)
+
+    @staticmethod
+    def in_board_range(*args):
+        for arg in args:
+            if arg < 0 or arg > 7:
+                return False
+        return True
+    
 class Board:
     
     def __init__(self):
@@ -27,7 +46,7 @@ class Board:
    
     def _add_pieces(self,color):
         if color == 'white':
-            row_pawn, row_other = (6,7) #last two rows
+            row_pawn, row_other = (3,7) #last two rows
         else:
             row_pawn, row_other = (1,0) #first two rows
 
@@ -53,6 +72,73 @@ class Board:
         #king
         self.squares[row_other][4] = Square(row_other, 4, King(color))
         
+
+
+    def calc_moves(self, piece, row, col):
+        """calculate all the valid moves of the selected piece"""
+        pass
+
+        if piece.name == "pawn":
+            
+            if piece.color == 'black':
+                print(self.squares[2][col].isempty())
+                print(self.squares[3][col].isempty())
+        
+                if row == 1 and self.squares[2][col].isempty() and self.squares[3][col].isempty():
+
+                    valid_moves = [
+                        (2, col),
+                        (3, col)
+                    ]
+                    print(valid_moves)
+                elif self.squares[row+1][col].has_team_piece(piece.color) or self.squares[row+1][col].has_rival_piece(piece.color):
+                    valid_moves = []
+                    print(valid_moves)
+                else:
+                    valid_moves = [(row+1, col)]
+                    print(valid_moves)
+                
+
+        elif piece.name == "knight":
+            #8 valid moves
+            valid_moves = [
+                (row-2,col+1),
+                (row-2, col-1),
+                (row+2, col+1),
+                (row+2, col-1),
+                (row+1, col+2),
+                (row+1, col-2),
+                (row-1, col+2),
+                (row-1, col-2)
+            ]
+            for valid_move in valid_moves:
+                valid_move_row, valid_move_col = valid_move
+                
+                if Square.in_board_range(valid_move_row, valid_move_col):
+                    if self.squares[valid_move_row][valid_move_col].isempty_or_rival(piece.color):
+                        #create new move squares
+                        initial = Square(row, col)
+                        final = Square(valid_move_row, valid_move_col)
+                        move = Move(initial, final)
+                        piece.add_move(move)
+            print(piece.moves[0])
+            print(piece.moves[1])
+        elif piece.name == "bishob":
+            pass
+        
+        elif piece.name == "rook":
+            pass
+        
+        elif piece.name == "queen":
+            pass
+        
+        elif piece.name == "king":
+            pass
+        
+    
+
+
+
 class Piece:
 
     def __init__(self, name, color, texture=None, texture_rect=None):
@@ -68,7 +154,7 @@ class Piece:
         self.texture = os.path.join(
             f"assets/images/imgs-{size}px/{self.color}_{self.name}.png"
         )
-    def add_moves(self, move):
+    def add_move(self, move):
         self.moves.append(move)
 class Pawn(Piece):
 
