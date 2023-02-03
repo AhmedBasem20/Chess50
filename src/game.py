@@ -28,7 +28,20 @@ class Game:
                     piece = self.board.squares[row][col].piece
                     #all pieces except dragger piece
                     if piece is not self.dragger.piece:
+                        piece.set_texture(size=80)
                         img = pygame.image.load(piece.texture)
                         img_center = col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2
                         piece.texture_rect = img.get_rect(center=img_center)
                         surface.blit(img, piece.texture_rect)
+    def show_moves(self, surface):
+        if self.dragger.dragging:
+            piece = self.dragger.piece
+
+            for move in piece.moves:
+                print(str(move.final.row)+" "+str(move.final.col))
+                #color
+                color = (255,0,0) if (move.final.row + move.final.col) % 2 == 0 else (0,255,0)
+                #rect
+                rect = (move.final.col * SQUARE_SIZE, move.final.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+                #draw
+                pygame.draw.rect(surface, color, rect)
