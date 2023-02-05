@@ -109,6 +109,30 @@ class Board:
                     move_row += row_incr
                     move_col += col_incr       
 
+        def king_moves():
+            #possible king moves: all adjacent squares
+            adjs = [
+                (row-1, col-1),
+                (row-1, col),
+                (row-1, col+1),
+                (row, col-1),
+                (row, col+1),
+                (row+1, col-1),
+                (row+1, col),
+                (row+1, col+1)
+            ]
+            for adj in adjs:
+                move_row, move_col = adj
+
+                if Square.in_board_range(move_row, move_col):
+                    if self.squares[move_row][move_col].isempty_or_rival(piece.color):
+                        #create initial and final move squares
+                        initial = Square(row, col)
+                        final = Square(move_row, move_col)
+                        #create new move
+                        move = Move(initial, final)
+                        piece.add_move(move)
+
 
         if piece.name == "pawn":
             
@@ -196,7 +220,7 @@ class Board:
             ])
         
         elif piece.name == "king":
-            pass
+            king_moves()
         
     
 
