@@ -76,7 +76,39 @@ class Board:
 
     def calc_moves(self, piece, row, col):
         """calculate all the valid moves of the selected piece"""
-        pass
+        
+        def straightline_moves(incrs):
+            for incr in incrs:
+                row_incr, col_incr = incr
+                move_row = row + row_incr
+                move_col = col + col_incr
+
+                while True:
+                    if Square.in_board_range(move_row, move_col):
+                        #create initial and final move squares
+                        initial = Square(row, col)
+                        final = Square(move_row, move_col)
+                        #create new move
+                        move = Move(initial, final)
+                    
+                        #empty
+                        if self.squares[move_row][move_col].isempty():
+                            piece.add_move(move)
+                            
+                        #has rival piece
+                        if self.squares[move_row][move_col].has_rival_piece(piece.color):
+                            #create new move
+                            piece.add_move(move)
+                            break
+                        #has team piece
+                        if self.squares[move_row][move_col].has_team_piece(piece.color):
+                
+                            break
+                    else: break
+                    #incremening moves
+                    move_row += row_incr
+                    move_col += col_incr       
+
 
         if piece.name == "pawn":
             
@@ -135,14 +167,33 @@ class Board:
                         piece.add_move(move)
             print(piece.moves[0])
             print(piece.moves[1])
-        elif piece.name == "bishob":
-            pass
+        elif piece.name == "bishop":
+            straightline_moves([
+                (-1,1),
+                (-1,-1),
+                (1,-1),
+                (1,1)
+            ])
         
         elif piece.name == "rook":
-            pass
+            straightline_moves([
+                (0,1),
+                (0,-1),
+                (1,0),
+                (-1,0)
+            ])
         
         elif piece.name == "queen":
-            pass
+            straightline_moves([
+                (-1,1),
+                (-1,-1),
+                (1,-1),
+                (1,1),
+                (0,1),
+                (0,-1),
+                (1,0),
+                (-1,0)
+            ])
         
         elif piece.name == "king":
             pass
