@@ -46,7 +46,7 @@ class Board:
    
     def _add_pieces(self,color):
         if color == 'white':
-            row_pawn, row_other = (3,7) #last two rows
+            row_pawn, row_other = (6,7) #last two rows
         else:
             row_pawn, row_other = (1,0) #first two rows
 
@@ -80,24 +80,36 @@ class Board:
 
         if piece.name == "pawn":
             
-            if piece.color == 'black':
-                print(self.squares[2][col].isempty())
-                print(self.squares[3][col].isempty())
-        
-                if row == 1 and self.squares[2][col].isempty() and self.squares[3][col].isempty():
-
-                    valid_moves = [
-                        (2, col),
-                        (3, col)
-                    ]
-                    print(valid_moves)
-                elif self.squares[row+1][col].has_team_piece(piece.color) or self.squares[row+1][col].has_rival_piece(piece.color):
-                    valid_moves = []
-                    print(valid_moves)
-                else:
-                    valid_moves = [(row+1, col)]
-                    print(valid_moves)
+            #better approach
+            steps = 1 if piece.moved else 2
+            start = row + piece.dir
+            end = row  + (piece.dir * (1 + steps))
+            for move_row in range(start, end, piece.dir):
+                if Square.in_board_range(move_row):
+                    if self.squares[move_row][col].isempty():
+                        #create initial and final move squares
+                        initial = Square(row, col)
+                        final = Square(move_row, col)
+                        #create new move
+                        move = Move(initial, final)
+                        piece.add_move(move)
+                    
+                    else: break #blocked
                 
+                else: break #not in range
+            
+            #attack moves
+            move_row = row + piece.dir
+            move_cols = [col-1, col+1]
+            for move_col in move_cols:
+                if Square.in_board_range(move_row, move_col):
+                    if self.squares[move_row][move_col].has_rival_piece(piece.color):
+                        #create initial and final move squares
+                        initial = Square(row, col)
+                        final = Square(move_row, col)
+                        #create new move
+                        move = Move(initial, final)
+                        piece.add_move(move)
 
         elif piece.name == "knight":
             #8 valid moves
