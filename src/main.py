@@ -2,6 +2,7 @@ import pygame
 import sys
 from const import *
 from game import Game
+from board import *
 class Main:
 
     def __init__(self) -> None:
@@ -56,6 +57,23 @@ class Main:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     #know the coordinates
                     #put the piece if valid
+                    if dragger.dragging:
+                        dragger.update_mouse(event.pos)
+
+                        released_row = dragger.mouseY // SQUARE_SIZE
+                        released_col = dragger.mouseX // SQUARE_SIZE
+
+                        #create possible move
+                        initial = Square(dragger.initial_row, dragger.initial_col)
+                        final = Square(released_row, released_col)
+                        move = Move(initial, final)
+
+                        if board.valid_moves(dragger.piece, move):
+                            board.move(dragger.piece, move)
+                            
+                            game.show_background(screen)
+                            game.show_pieces(screen)
+                            
                     dragger.undrag_piece(piece)
 
 
