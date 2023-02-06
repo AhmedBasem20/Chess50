@@ -6,9 +6,9 @@ from dragger import *
 class Game:
 
     def __init__(self):
+        self.next_player = 'white'
         self.board = Board()
         self.dragger = Dragger()
-    
     def show_background(self, surface):
         """Draw the chess background
         args: pygame surface"""
@@ -45,3 +45,7 @@ class Game:
                 rect = (move.final.col * SQUARE_SIZE, move.final.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
                 #draw
                 pygame.draw.rect(surface, color, rect)
+    
+    def next_turn(self):
+        self.next_player = 'white' if self.next_player == 'black' else 'black'
+        
