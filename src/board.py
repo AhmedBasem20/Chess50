@@ -8,6 +8,8 @@ class Square:
         self.col = col
         self.piece = piece
     
+    def __eq__(self, other) -> bool:
+        return self.row == other.row and self.col == other.col
     def has_piece(self):
         return self.piece != None
 
@@ -34,9 +36,31 @@ class Board:
     
     def __init__(self):
         self.squares = [[0,0,0,0, 0,0,0,0] for col in range(COLS)] #console board
+        self.last_move = None
         self._create()
         self._add_pieces('white')
         self._add_pieces('black')
+    
+    def move(self, piece, move):
+        initial = move.initial
+        final = move.final
+
+        #board move update
+        self.squares[initial.row][initial.col].piece = None
+        self.squares[final.row][final.col].piece = piece
+
+        #move
+        piece.moved = True
+        
+        #clear valid moves
+        piece.clear_moves()
+
+        self.last_move = move
+
+    def valid_moves(self, piece, move):
+        print(move)
+        print(piece.moves)
+        return move in piece.moves
 
     def _create(self):
 
@@ -243,6 +267,8 @@ class Piece:
         )
     def add_move(self, move):
         self.moves.append(move)
+    def clear_moves(self):
+        self.moves = []
 class Pawn(Piece):
 
     def __init__(self, color):
